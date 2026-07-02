@@ -26,6 +26,7 @@ SETUP STEPS:
 import os
 import json
 import threading
+import time
 import requests
 import pandas as pd
 from datetime import datetime, timezone
@@ -199,6 +200,14 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b"Bollinger bot is running.")
 
+    def do_HEAD(self):
+        # UptimeRobot (and many uptime monitors) send HEAD requests by
+        # default. Without this, Python's BaseHTTPRequestHandler replies
+        # 501 Not Implemented, which UptimeRobot reports as "Down".
+        self.send_response(200)
+        self.send_header("Content-type", "text/plain")
+        self.end_headers()
+
     def log_message(self, format, *args):
         pass  # silence default request logging
 
@@ -233,7 +242,6 @@ def main():
             ws.run_forever(ping_interval=20, ping_timeout=10)
         except Exception as e:
             print(f"[Reconnect] WebSocket dropped: {e}. Reconnecting in 5s...")
-        import time
         time.sleep(5)
 
 
