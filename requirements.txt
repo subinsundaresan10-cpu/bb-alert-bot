@@ -1,0 +1,7 @@
+python-binance
+python-telegram-bot
+pandas
+numpy
+requests
+schedule
+python-dotenv
